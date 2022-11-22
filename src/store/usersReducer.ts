@@ -42,8 +42,7 @@ export const setUsersAC = (data: Array<UserType>) => {
 //thunks
 export const getUsersTC = (): AppThunk => {
     return (dispatch) => {
-        // dispatch(setAppStatusAC("loading"))
-
+        dispatch(setAppStatusAC("loading"))
         usersAPI.users()
             .then(res => {
 
@@ -53,19 +52,19 @@ export const getUsersTC = (): AppThunk => {
             .catch(err => {
                 dispatch(setAppErrorAC(err.response.data.message))
             })
-            // .finally(() => dispatch(setAppStatusAC("idle")))
+            .finally(() => dispatch(setAppStatusAC("succeeded")))
     }
 }
 
 export const blockUsersTC = (usersId: GridSelectionModel): AppThunk => {
     return (dispatch, getState) => {
 
+        dispatch(setAppStatusAC("loading"))
         usersAPI.block(usersId)
             .then(res => {
 
                 const loggedUserId = getState().auth.user.id
                 if (usersId.find(u => u === loggedUserId)) {
-                    // dispatch(blockLoggedUserAC("blocked"))
                     dispatch(logoutAC())
                 }
             })
@@ -75,10 +74,13 @@ export const blockUsersTC = (usersId: GridSelectionModel): AppThunk => {
             .catch(err => {
                 dispatch(setAppErrorAC(err.response.data.message))
             })
+            .finally(() =>  dispatch(setAppStatusAC("succeeded")))
     }
 }
 export const unblockUsersTC = (usersId: GridSelectionModel): AppThunk => {
     return (dispatch) => {
+
+        dispatch(setAppStatusAC("loading"))
         usersAPI.unblock(usersId)
             .then(res => {
                 dispatch(getUsersTC())
@@ -86,18 +88,26 @@ export const unblockUsersTC = (usersId: GridSelectionModel): AppThunk => {
             .catch(err => {
                 dispatch(setAppErrorAC(err.response.data.message))
             })
+            .finally(() =>  dispatch(setAppStatusAC("succeeded")))
     }
 }
 
 export const deleteUsersTC = (usersId: GridSelectionModel): AppThunk => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+
+        dispatch(setAppStatusAC("loading"))
         usersAPI.delete(usersId)
             .then(res => {
+                const loggedUserId = getState().auth.user.id
+                if (usersId.find(u => u === loggedUserId)) {
+                    dispatch(logoutAC())
+                }
                 dispatch(getUsersTC())
             })
             .catch(err => {
                 dispatch(setAppErrorAC(err.response.data.message))
             })
+            .finally(() =>  dispatch(setAppStatusAC("succeeded")))
     }
 }
 

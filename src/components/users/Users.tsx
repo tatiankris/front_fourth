@@ -44,6 +44,7 @@ function Users() {
 
     const rows = users.map(u => {
         return {
+            key: u._id,
             status:u.status,
             id: u._id,
             name: u.email,

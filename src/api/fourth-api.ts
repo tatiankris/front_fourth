@@ -13,7 +13,10 @@ export const authAPI = {
     },
     register(data: RegisterDataType) {
         return instance.post('/api/auth/registration', data)
-    }
+    },
+    me() {
+        return instance.get('/api/auth/me', {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}})
+    },
 }
 
 export const usersAPI = {

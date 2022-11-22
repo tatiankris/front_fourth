@@ -1,11 +1,15 @@
-let initialState = {
-    status: '',
-    error: null
-}
+
+type AppStatusType = 'loading' | 'succeeded'
+
 export type StateType = {
-    status: string,
+    status: AppStatusType
     error: null | string
 }
+
+let initialState = {
+    status: 'succeeded',
+    error: null
+} as StateType
 
 export const appReducer = (state: StateType = initialState, action: AppActionsType): StateType => {
 
@@ -22,7 +26,7 @@ export const appReducer = (state: StateType = initialState, action: AppActionsTy
 }
 
 //actions
-export const setAppStatusAC = (status: string) => {
+export const setAppStatusAC = (status: AppStatusType) => {
     return {
         type: 'app/SET-STATUS',
         status

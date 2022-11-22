@@ -23,6 +23,7 @@ export const authReducer = (state: StateType = initialState, action: AuthActions
             return {...state, isLoggedIn: action.value, user: action.user}
         }
         case 'auth/SET-IS-LOGOUT': {
+            localStorage.removeItem('token')
             return {...state, isLoggedIn: false, user: {} as UserData}
         }
         case 'auth/SET-SIGN-UP': {
@@ -68,26 +69,24 @@ export const blockLoggedUserAC = (status: string) => {
 //thunk
 export const loginTC = (data: LoginDataType): AppThunk => {
     return (dispatch) => {
-
+        dispatch(setAppStatusAC("loading"))
         authAPI.login(data)
             .then(res => {
                 let user = {id: res.data.id, email: res.data.email, status: res.data.status} as UserData
                 dispatch(loginAC(user, true))
+
+                localStorage.setItem('token', res.data.token)
+                console.log('token', res.data.token)
             })
-            .then(() => {
+            .then(() =>{
                 dispatch(getUsersTC())
             })
             .catch(err => {
-                const error = err.response
-                    ? err.response.data.error
-                    : err.message
-                console.log(error)
-
                 dispatch(setAppErrorAC(err.response.data.message))
 
             })
             .finally(() =>
-                dispatch(setAppStatusAC("idle"))
+                dispatch(setAppStatusAC("succeeded"))
             )
     }
 }
@@ -95,7 +94,7 @@ export const loginTC = (data: LoginDataType): AppThunk => {
 export const registerTC = (data: RegisterDataType): AppThunk => {
     return (dispatch) => {
         // debugger
-
+        dispatch(setAppStatusAC("loading"))
         authAPI.register(data)
             .then(res => {
                 if (res.status === 200) {
@@ -106,13 +105,32 @@ export const registerTC = (data: RegisterDataType): AppThunk => {
                 }
             })
             .catch(err => {
-                console.log(err.response.data.message)
-
                 dispatch(setAppErrorAC(err.response.data.message))
-
             })
             .finally(() =>
-                dispatch(setAppStatusAC("idle"))
+                dispatch(setAppStatusAC("succeeded"))
+
+            )
+    }
+}
+
+export const authTC = (): AppThunk => {
+    return (dispatch) => {
+        dispatch(setAppStatusAC("loading"))
+        // const token = localStorage.getItem('token')
+        authAPI.me()
+            .then(res => {
+                let user = {id: res.data.id, email: res.data.email, status: res.data.status} as UserData
+                dispatch(loginAC(user, true))
+                dispatch(getUsersTC())
+                localStorage.setItem('token', res.data.token)
+            })
+            .catch(err => {
+                dispatch(setAppErrorAC(err.response.data.message))
+                localStorage.removeItem('token')
+                })
+            .finally(() =>
+                dispatch(setAppStatusAC("succeeded"))
             )
     }
 }
