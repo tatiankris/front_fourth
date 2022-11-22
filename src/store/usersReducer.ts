@@ -1,6 +1,8 @@
 import {AppThunk} from "./store";
-import {setAppStatusAC} from "./appReducer";
+import {setAppErrorAC, setAppStatusAC} from "./appReducer";
 import {usersAPI} from "../api/fourth-api";
+import {GridSelectionModel} from "@mui/x-data-grid";
+import {blockLoggedUserAC, logoutAC} from "./authReducer";
 
 type StateType = {
     users: Array<UserType>;
@@ -10,7 +12,7 @@ type UserType = {
     email: string
     password: string
     registrationDate: string
-    lastLoginData: string
+    lastLoginDate: string
     status: string
     __v: number
 }
@@ -46,15 +48,56 @@ export const getUsersTC = (): AppThunk => {
             .then(res => {
 
                 dispatch(setUsersAC(res.data))
-                console.log(res.data)
+                console.log('users', res.data)
             })
             .catch(err => {
-                const error = err.response
-                    ? err.response.data.error
-                    : err.message
-                console.log(error)
+                dispatch(setAppErrorAC(err.response.data.message))
             })
             // .finally(() => dispatch(setAppStatusAC("idle")))
+    }
+}
+
+export const blockUsersTC = (usersId: GridSelectionModel): AppThunk => {
+    return (dispatch, getState) => {
+
+        usersAPI.block(usersId)
+            .then(res => {
+
+                const loggedUserId = getState().auth.user.id
+                if (usersId.find(u => u === loggedUserId)) {
+                    // dispatch(blockLoggedUserAC("blocked"))
+                    dispatch(logoutAC())
+                }
+            })
+            .then(() => {
+                dispatch(getUsersTC())
+            })
+            .catch(err => {
+                dispatch(setAppErrorAC(err.response.data.message))
+            })
+    }
+}
+export const unblockUsersTC = (usersId: GridSelectionModel): AppThunk => {
+    return (dispatch) => {
+        usersAPI.unblock(usersId)
+            .then(res => {
+                dispatch(getUsersTC())
+            })
+            .catch(err => {
+                dispatch(setAppErrorAC(err.response.data.message))
+            })
+    }
+}
+
+export const deleteUsersTC = (usersId: GridSelectionModel): AppThunk => {
+    return (dispatch) => {
+        usersAPI.delete(usersId)
+            .then(res => {
+                dispatch(getUsersTC())
+            })
+            .catch(err => {
+                dispatch(setAppErrorAC(err.response.data.message))
+            })
     }
 }
 

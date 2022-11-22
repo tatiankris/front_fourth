@@ -3,6 +3,7 @@ import thunk, {ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { appReducer } from './appReducer';
 import { authReducer } from './authReducer';
 import {usersReducer} from "./usersReducer";
+import { composeWithDevTools } from 'redux-devtools-extension';
 
 const rootReducer = combineReducers({
     app: appReducer,
@@ -10,7 +11,10 @@ const rootReducer = combineReducers({
     users: usersReducer,
 });
 
-export const store = createStore(rootReducer, applyMiddleware(thunk));
+export const store = createStore(
+    rootReducer,
+    composeWithDevTools(applyMiddleware(thunk))
+);
 
 export type AppRootStateType = ReturnType<typeof rootReducer>;
 export type AppDispatch = ThunkDispatch<AppRootStateType, unknown, AnyAction>;
