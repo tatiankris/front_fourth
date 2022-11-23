@@ -3,7 +3,9 @@ import {GridSelectionModel} from "@mui/x-data-grid";
 
 export const instance = axios.create({
     // baseURL: 'http://localhost:5000',
-    baseURL: process.env.REACT_APP_BACK_URL || 'https://back-fourth-tatiankris.vercel.app/',
+    baseURL: 'https://back-fourth-tatiankris.vercel.app',
+    // baseURL: process.env.REACT_APP_BACK_URL || 'https://back-fourth-tatiankris.vercel.app/',
+    // withCredentials: true
 })
 
 export const authAPI = {
