@@ -5,13 +5,10 @@ import {
     FormGroup,
     FormLabel,
     Grid,
-    IconButton,
-    InputAdornment,
     Paper,
     TextField
 } from "@mui/material";
-import {NavLink, useNavigate} from "react-router-dom";
-import {LOGIN} from "../../Routing";
+import {useNavigate} from "react-router-dom";
 import {useAppDispatch} from "../../hooks";
 import {FormikErrors, useFormik} from "formik";
 import {registerTC} from "../../store/authReducer";

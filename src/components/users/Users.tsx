@@ -1,11 +1,14 @@
 import * as React from "react";
 import {useAppDispatch, useAppSelector} from "../../hooks";
-import {useEffect, useState} from "react";
-import {blockUsersTC, deleteUsersTC, getUsersTC, setUsersAC, unblockUsersTC} from "../../store/usersReducer";
+import {useState} from "react";
+import {blockUsersTC, deleteUsersTC, unblockUsersTC} from "../../store/usersReducer";
 import {DataGrid, GridColDef, GridSelectionModel} from "@mui/x-data-grid";
-import {Button, Container, Grid, Paper, Stack, TableContainer} from "@mui/material";
+import {Container, Grid, IconButton, Paper, Stack, SvgIcon, TableContainer} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {LOGIN} from "../../Routing";
+import DeleteIcon from '@mui/icons-material/Delete';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 function Users() {
 
@@ -13,11 +16,6 @@ function Users() {
     const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
     const dispatch = useAppDispatch();
     const navigate = useNavigate()
-
-
-    // useEffect(() => {
-    //     dispatch(getUsersTC());
-    // }, [])
 
     let users = useAppSelector(state => state.users.users)
 
@@ -83,10 +81,15 @@ function Users() {
                     paddingBottom={2}
                     marginLeft={14}
                 >
-                    <Button color="error" variant="contained" onClick={onHandleBlock}>Block</Button>
-                    <Button color="success" variant="contained" onClick={onHandleUnblock}>Unblock</Button>
-                    <Button variant="outlined" onClick={onHandleDelete}>Delete</Button>
-
+                    <IconButton onClick={onHandleBlock}>
+                        <SvgIcon color={'error'} component={LockIcon} />
+                    </IconButton>
+                    <IconButton color={'primary'} onClick={onHandleUnblock}>
+                        <SvgIcon component={LockOpenIcon} />
+                    </IconButton>
+                    <IconButton onClick={onHandleDelete}>
+                        <SvgIcon component={DeleteIcon} />
+                    </IconButton>
                 </Stack>
 
 
@@ -96,7 +99,6 @@ function Users() {
                             rows={rows}
                             columns={columns}
                             pageSize={8}
-                            // rowsPerPageOptions={[6]}
                             checkboxSelection
                             onSelectionModelChange={(newSelectionModel) => {
                                 console.log(newSelectionModel)

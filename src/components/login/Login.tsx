@@ -1,8 +1,5 @@
 import * as React from "react";
-import {useAppDispatch, useAppSelector} from "../../hooks";
-import {getUsersTC} from "../../store/usersReducer";
-import {useCallback, useEffect} from "react";
-import {DataGrid, GridColDef} from "@mui/x-data-grid";
+import {useAppDispatch} from "../../hooks";
 import {
     Container,
     Grid,
